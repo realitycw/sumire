@@ -76,7 +76,14 @@ app.get("/api/v1/history", async (req, res) => {
       where: Object.keys(filter).length ? filter : undefined,
     });
 
-    res.status(200).json(history);
+    const count = await prisma.history.count({
+      where: Object.keys(filter).length ? filter : undefined,
+    });
+
+    res.status(200).json({
+      data: history,
+      total: count,
+    });
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }
