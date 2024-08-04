@@ -124,9 +124,19 @@ app.put("/api/v1/history/:id", async (req, res) => {
   } = req.body;
 
   try {
-    const update_history = await prisma.history.update({
+    const update_history = await prisma.history.upsert({
       where: { id: parseInt(id, 10) },
-      data: {
+      update: {
+        product_id: product_id,
+        product_name: product_name,
+        manufacturer_name: manufacturer_name,
+        supplier_name: supplier_name,
+        transaction_date: transaction_date,
+        quantity: quantity,
+        description: description,
+      },
+      create: {
+        history_id: { id: parseInt(id, 10) },
         product_id: product_id,
         product_name: product_name,
         manufacturer_name: manufacturer_name,
@@ -169,6 +179,19 @@ app.patch("/api/v1/history/:id", async (req, res) => {
       data: filter,
     });
     res.status(200).json(update_history);
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.delete("/api/v1/history/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const delete_history = await prisma.history.delete({
+      where: { id: parseInt(id, 10) },
+    });
+    res.status(200).json(delete_history);
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }
