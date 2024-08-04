@@ -1,16 +1,19 @@
 import { Grid } from "gridjs-react";
+import { TData } from "gridjs/dist/src/types.js";
 import "gridjs/dist/theme/mermaid.css";
 
 interface InventoryTableProps {
-    data: any[];
+  data: TData[];
 }
 
-const HisotryTable = () => {
-    const data = 
-}
+const InventoryTable = ({ data }: InventoryTableProps) => (
+  <Grid
+    data={data}
+    columns={["製品ID", "製品名", "数量"]}
+    pagination={{ limit: 5 }}
+    search={true}
+    sort={true}
+  />
+);
 
-return (
-    <Grid
-    data
-
-)
+export default InventoryTable;
