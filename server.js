@@ -49,6 +49,54 @@ app.all("*", remixHandler);
 app.use(express.json());
 const prisma = new PrismaClient();
 
+app.get("/api/v1/inventory", async (req, res) => {
+  const { product_id, product_name, quantity } = req.query;
+
+  const filter = {};
+  if (product_id) filter.product_id = product_id;
+  if (product_name) filter.product_name = product_name;
+  if (quantity) filter.quantity = quantity;
+
+  try {
+    const tally = await prisma.history.groupBy({
+      by: ["product_id"],
+      where: Object.keys(filter).length ? filter : undefined,
+      _sum: {
+        quantity: true,
+      },
+    });
+
+    const count = await prisma.history.groupBy({
+      by: ["product_id"],
+      where: Object.keys(filter).length ? filter : undefined,
+    });
+
+    const inventory = await Promise.all(
+      tally.map(async (item) => {
+        const product = await prisma.history.findMany({
+          where: { product_id: item.product_id },
+          select: { product_name: true },
+          distinct: ["product_name"],
+          take: 1,
+        });
+
+        return {
+          product_id: item.product_id,
+          product_name: product.product_name,
+          quantity: item.quantity,
+        };
+      })
+    );
+
+    res.status(200).json({
+      data: inventory,
+      total: count,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 app.get("/api/v1/history", async (req, res) => {
   const {
     history_id,
