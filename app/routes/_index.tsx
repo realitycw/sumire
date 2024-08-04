@@ -89,19 +89,26 @@ export default function Index() {
   };
 
   return (
-    <div style={{ display: "flex" }}>
-      <div style={{ width: "200px", borderRight: "1px solid #ccc" }}>
-        <button onClick={() => setCurrentTable("history")}>Dashboard</button>
-        <button onClick={() => setCurrentTable("inventory")}>Inventory</button>
-        {/* Add your filter inputs here */}
-        <div>
-          <input
-            type="text"
-            name="製品ID"
-            placeholder="Item Name"
-            onChange={handleFilterChange}
-          />
-          {/* <input
+    <div>
+      <div>
+        <h1>在庫管理システム</h1>
+      </div>
+      <div style={{ display: "flex" }}>
+        <div style={{ width: "200px", borderRight: "1px solid #ccc" }}>
+          <button onClick={() => setCurrentTable("inventory")}>
+            Inventory
+          </button>
+          <br />
+          <button onClick={() => setCurrentTable("history")}>History</button>
+          {/* Add your filter inputs here */}
+          <div>
+            <input
+              type="text"
+              name="製品ID"
+              placeholder="Item Name"
+              onChange={handleFilterChange}
+            />
+            {/* <input
             type="number"
             name="minQuantity"
             placeholder="Min Quantity"
@@ -113,9 +120,10 @@ export default function Index() {
             placeholder="Max Price"
             onChange={handleFilterChange}
           /> */}
+          </div>
         </div>
+        <div style={{ flex: 1, padding: "20px" }}>{tables[currentTable]}</div>
       </div>
-      <div style={{ flex: 1, padding: "20px" }}>{tables[currentTable]}</div>
     </div>
   );
 }
