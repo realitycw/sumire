@@ -1,3 +1,4 @@
+import { PrismaClient } from "@prisma/client";
 import { createRequestHandler } from "@remix-run/express";
 import compression from "compression";
 import express from "express";
@@ -44,6 +45,134 @@ app.use(morgan("tiny"));
 
 // handle SSR requests
 app.all("*", remixHandler);
+
+app.use(express.json());
+const prisma = new PrismaClient();
+
+app.get("/api/v1/history", async (req, res) => {
+  const {
+    history_id,
+    product_id,
+    product_name,
+    manufacturer_name,
+    supplier_name,
+    transaction_date,
+    quantity,
+    description,
+  } = req.query;
+
+  const filter = {};
+  if (history_id) filter.history_id = history_id;
+  if (product_id) filter.product_id = product_id;
+  if (product_name) filter.product_name = product_name;
+  if (manufacturer_name) filter.manufacturer_name = manufacturer_name;
+  if (supplier_name) filter.supplier_name = supplier_name;
+  if (transaction_date) filter.transaction_date = transaction_date;
+  if (quantity) filter.quantity = quantity;
+  if (description) filter.description = description;
+
+  try {
+    const history = await prisma.history.findMany({
+      where: Object.keys(filter).length ? filter : undefined,
+    });
+
+    res.status(200).json(history);
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.post("/api/v1/history", async (req, res) => {
+  const {
+    product_id,
+    product_name,
+    manufacturer_name,
+    supplier_name,
+    transaction_date,
+    quantity,
+    description,
+  } = req.body;
+
+  try {
+    const save_history = await prisma.history.create({
+      data: {
+        product_id: product_id,
+        product_name: product_name,
+        manufacturer_name: manufacturer_name,
+        supplier_name: supplier_name,
+        transaction_date: transaction_date,
+        quantity: quantity,
+        description: description,
+      },
+    });
+    res.status(201).json(save_history);
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.put("/api/v1/history/:id", async (req, res) => {
+  const { id } = req.params;
+  const {
+    product_id,
+    product_name,
+    manufacturer_name,
+    supplier_name,
+    transaction_date,
+    quantity,
+    description,
+  } = req.body;
+
+  try {
+    const update_history = await prisma.history.update({
+      where: { id: parseInt(id, 10) },
+      data: {
+        product_id: product_id,
+        product_name: product_name,
+        manufacturer_name: manufacturer_name,
+        supplier_name: supplier_name,
+        transaction_date: transaction_date,
+        quantity: quantity,
+        description: description,
+      },
+    });
+    res.status(200).json(update_history);
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.patch("/api/v1/history/:id", async (req, res) => {
+  const { id } = req.params;
+  const {
+    product_id,
+    product_name,
+    manufacturer_name,
+    supplier_name,
+    transaction_date,
+    quantity,
+    description,
+  } = req.body;
+
+  const filter = {};
+  if (product_id) filter.product_id = product_id;
+  if (product_name) filter.product_name = product_name;
+  if (manufacturer_name) filter.manufacturer_name = manufacturer_name;
+  if (supplier_name) filter.supplier_name = supplier_name;
+  if (transaction_date) filter.transaction_date = transaction_date;
+  if (quantity) filter.quantity = quantity;
+  if (description) filter.description = description;
+
+  try {
+    const update_history = await prisma.history.update({
+      where: { id: parseInt(id, 10) },
+      data: filter,
+    });
+    res.status(200).json(update_history);
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () =>
