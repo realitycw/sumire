@@ -4,8 +4,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import HistoryTable from "./history";
 import InventoryTable from "./inventory";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const fetchHistoryData = async (filters: Record<string, any>) => {
+const fetchHistoryData = async (filters: Record<string, string>) => {
   const queryParams = new URLSearchParams(
     Object.entries(filters)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -19,8 +18,7 @@ const fetchHistoryData = async (filters: Record<string, any>) => {
   return res.json();
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const fetchInventoryData = async (filters: Record<string, any>) => {
+const fetchInventoryData = async (filters: Record<string, string>) => {
   const queryParams = new URLSearchParams(
     Object.entries(filters)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -47,8 +45,7 @@ export default function Index() {
   );
   const [historyData, setHistoryData] = useState<TData[]>([]);
   const [inventoryData, setInventoryData] = useState<TData[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [filters, setFilters] = useState<Record<string, any>>({
+  const [filters, setFilters] = useState<Record<string, string>>({
     history_id: "",
     product_id: "",
     product_name: "",
