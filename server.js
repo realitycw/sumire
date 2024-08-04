@@ -125,7 +125,7 @@ app.put("/api/v1/history/:id", async (req, res) => {
 
   try {
     const update_history = await prisma.history.upsert({
-      where: { id: parseInt(id, 10) },
+      where: { history_id: parseInt(id, 10) },
       update: {
         product_id: product_id,
         product_name: product_name,
@@ -175,7 +175,7 @@ app.patch("/api/v1/history/:id", async (req, res) => {
 
   try {
     const update_history = await prisma.history.update({
-      where: { id: parseInt(id, 10) },
+      where: { history_id: parseInt(id, 10) },
       data: filter,
     });
     res.status(200).json(update_history);
@@ -189,7 +189,7 @@ app.delete("/api/v1/history/:id", async (req, res) => {
 
   try {
     const delete_history = await prisma.history.delete({
-      where: { id: parseInt(id, 10) },
+      where: { history_id: parseInt(id, 10) },
     });
     res.status(200).json(delete_history);
   } catch (error) {
