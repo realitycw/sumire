@@ -40,9 +40,9 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Index() {
-  const [currentTable, setCurrentTable] = useState<"inventory" | "history">(
-    "inventory"
-  );
+  const [currentView, setCurrentView] = useState<
+    "inventory" | "history" | "postForm"
+  >("inventory");
   const [historyData, setHistoryData] = useState<TData[]>([]);
   const [inventoryData, setInventoryData] = useState<TData[]>([]);
   const [filters, setFilters] = useState<Record<string, string>>({
@@ -73,58 +73,198 @@ export default function Index() {
     return () => clearInterval(intervalId);
   }, [filters, updateData]);
 
-  const handleFilterChange = (Event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = Event.target;
+  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+  };
+
+  const PostForm = () => {
+    const [formData, setFormData] = useState({
+      product_id: "",
+      product_name: "",
+      company: "",
+      quantity: "",
+    });
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+      e.preventDefault();
+      console.log("Form submitted:", formData);
+    };
+    return (
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>
+            製品ID:
+            <input
+              type="text"
+              name="product_id"
+              value={formData.product_id}
+              onChange={handleChange}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            製品名:
+            <input
+              type="number"
+              name="price"
+              value={formData.product_name}
+              onChange={handleChange}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            会社:
+            <input
+              type="number"
+              name="price"
+              value={formData.company}
+              onChange={handleChange}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            数量:
+            <input
+              type="number"
+              name="quantity"
+              value={formData.quantity}
+              onChange={handleChange}
+            />
+          </label>
+        </div>
+
+        <button type="submit">Submit</button>
+      </form>
+    );
   };
 
   const tables = {
     history: <HistoryTable data={historyData} />,
     inventory: <InventoryTable data={inventoryData} />,
+    postForm: <PostForm />,
   };
 
   return (
     <div>
       <div>
-        <h1>在庫管理システム</h1>
+        <p className="text-2xl text-gray-900 dark:text-white">
+          在庫管理システム
+        </p>
       </div>
       <div style={{ display: "flex" }}>
         <div style={{ width: "200px", borderRight: "1px solid #ccc" }}>
-          <button onClick={() => setCurrentTable("inventory")}>
-            Inventory
+          <button
+            className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+            onClick={() => setCurrentView("inventory")}
+          >
+            在庫一覧
           </button>
           <br />
-          <button onClick={() => setCurrentTable("history")}>History</button>
+          <button
+            className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+            onClick={() => setCurrentView("history")}
+          >
+            取引一覧
+          </button>
+          <button
+            className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+            onClick={() => setCurrentView("postForm")}
+          >
+            データ入力
+          </button>
           <br />
           <div>
-            <h2>Filter</h2>
+            <p className="text-xl text-gray-900 dark:text-white">Filter</p>
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="username"
+            >
+              取引ID
+            </label>
             <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               type="number"
-              name="履歴ID"
-              placeholder="履歴ID"
+              name="history_id"
+              placeholder="0"
               onChange={handleFilterChange}
             />
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="username"
+            >
+              製品ID
+            </label>
             <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               type="text"
-              name="製品ID"
+              name="product_id"
               placeholder="製品ID"
               onChange={handleFilterChange}
             />
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="username"
+            >
+              製品名
+            </label>
             <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               type="text"
-              name="製品名"
+              name="product_name"
               placeholder="製品名"
               onChange={handleFilterChange}
             />
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="username"
+            >
+              会社
+            </label>
             <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              type="text"
+              name="manufacturer_name"
+              placeholder="会社"
+              onChange={handleFilterChange}
+            />
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="username"
+            >
+              取引日
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              type="date"
+              name="transaction_date"
+              placeholder="YYYY-MM-DD"
+              onChange={handleFilterChange}
+            />
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="username"
+            >
+              数量
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               type="number"
-              name="maxPrice"
-              placeholder="Max Price"
+              name="quantity"
+              placeholder="0"
               onChange={handleFilterChange}
             />
           </div>
         </div>
-        <div style={{ flex: 1, padding: "20px" }}>{tables[currentTable]}</div>
+        <div style={{ flex: 1, padding: "20px" }}>{tables[currentView]}</div>
       </div>
     </div>
   );

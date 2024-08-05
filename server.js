@@ -102,7 +102,7 @@ app.get("/api/v1/history", async (req, res) => {
     history_id,
     product_id,
     product_name,
-    manufacturer_name,
+    company,
     transaction_date,
     quantity,
   } = req.query;
@@ -111,7 +111,7 @@ app.get("/api/v1/history", async (req, res) => {
   if (history_id) filter.history_id = history_id;
   if (product_id) filter.product_id = product_id;
   if (product_name) filter.product_name = product_name;
-  if (manufacturer_name) filter.manufacturer_name = manufacturer_name;
+  if (company) filter.company = company;
   if (transaction_date) filter.transaction_date = transaction_date;
   if (quantity) filter.quantity = quantity;
 
@@ -134,20 +134,15 @@ app.get("/api/v1/history", async (req, res) => {
 });
 
 app.post("/api/v1/history", async (req, res) => {
-  const {
-    product_id,
-    product_name,
-    manufacturer_name,
-    transaction_date,
-    quantity,
-  } = req.body;
+  const { product_id, product_name, company, transaction_date, quantity } =
+    req.body;
 
   try {
     const save_history = await prisma.history.create({
       data: {
         product_id: product_id,
         product_name: product_name,
-        manufacturer_name: manufacturer_name,
+        company: company,
         transaction_date: transaction_date,
         quantity: quantity,
       },
@@ -160,13 +155,8 @@ app.post("/api/v1/history", async (req, res) => {
 
 app.put("/api/v1/history/:id", async (req, res) => {
   const { id } = req.params;
-  const {
-    product_id,
-    product_name,
-    manufacturer_name,
-    transaction_date,
-    quantity,
-  } = req.body;
+  const { product_id, product_name, company, transaction_date, quantity } =
+    req.body;
 
   try {
     const update_history = await prisma.history.upsert({
@@ -174,7 +164,7 @@ app.put("/api/v1/history/:id", async (req, res) => {
       update: {
         product_id: product_id,
         product_name: product_name,
-        manufacturer_name: manufacturer_name,
+        company: company,
         transaction_date: transaction_date,
         quantity: quantity,
       },
@@ -182,7 +172,7 @@ app.put("/api/v1/history/:id", async (req, res) => {
         history_id: { id: parseInt(id, 10) },
         product_id: product_id,
         product_name: product_name,
-        manufacturer_name: manufacturer_name,
+        company: company,
         transaction_date: transaction_date,
         quantity: quantity,
       },
@@ -195,18 +185,13 @@ app.put("/api/v1/history/:id", async (req, res) => {
 
 app.patch("/api/v1/history/:id", async (req, res) => {
   const { id } = req.params;
-  const {
-    product_id,
-    product_name,
-    manufacturer_name,
-    transaction_date,
-    quantity,
-  } = req.body;
+  const { product_id, product_name, company, transaction_date, quantity } =
+    req.body;
 
   const filter = {};
   if (product_id) filter.product_id = product_id;
   if (product_name) filter.product_name = product_name;
-  if (manufacturer_name) filter.manufacturer_name = manufacturer_name;
+  if (company) filter.company = company;
   if (transaction_date) filter.transaction_date = transaction_date;
   if (quantity) filter.quantity = quantity;
 

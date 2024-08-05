@@ -8,12 +8,10 @@ datasource db {
 }
 
 model History {
-    history_id        Int     @id @default(autoincrement())
-    product_id        String
-    product_name      String
-    manufacturer_name String?
-    supplier_name     String?
-    transaction_date  String
-    quantity          Int
-    description       String?
+    history_id       Int     @id @default(autoincrement())
+    product_id       String
+    product_name     String
+    company          String?
+    transaction_date String
+    quantity         Int
 }
