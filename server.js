@@ -55,7 +55,7 @@ app.get("/api/v1/inventory", async (req, res) => {
   const filter = {};
   if (product_id) filter.product_id = product_id;
   if (product_name) filter.product_name = product_name;
-  if (quantity) filter.quantity = quantity;
+  if (quantity) filter.quantity = Number(quantity);
 
   try {
     const tally = await prisma.history.groupBy({
@@ -66,10 +66,12 @@ app.get("/api/v1/inventory", async (req, res) => {
       },
     });
 
-    const count = await prisma.history.groupBy({
-      by: ["product_id"],
-      where: Object.keys(filter).length ? filter : undefined,
-    });
+    // const count = await prisma.history.groupBy({
+    //   by: ["product_id"],
+    //   where: Object.keys(filter).length ? filter : undefined,
+    // });
+
+    const count = tally.length;
 
     const inventory = await Promise.all(
       tally.map(async (item) => {
@@ -102,16 +104,18 @@ app.get("/api/v1/history", async (req, res) => {
     history_id,
     product_id,
     product_name,
-    company,
+    company_name,
     transaction_date,
     quantity,
   } = req.query;
+
+  console.log(req.query);
 
   const filter = {};
   if (history_id) filter.history_id = history_id;
   if (product_id) filter.product_id = product_id;
   if (product_name) filter.product_name = product_name;
-  if (company) filter.company = company;
+  if (company_name) filter.company_name = company_name;
   if (transaction_date) filter.transaction_date = transaction_date;
   if (quantity) filter.quantity = quantity;
 
@@ -134,7 +138,7 @@ app.get("/api/v1/history", async (req, res) => {
 });
 
 app.post("/api/v1/history", async (req, res) => {
-  const { product_id, product_name, company, transaction_date, quantity } =
+  const { product_id, product_name, company_name, transaction_date, quantity } =
     req.body;
 
   try {
@@ -142,7 +146,7 @@ app.post("/api/v1/history", async (req, res) => {
       data: {
         product_id: product_id,
         product_name: product_name,
-        company: company,
+        company_name: company_name,
         transaction_date: transaction_date,
         quantity: quantity,
       },
@@ -155,7 +159,7 @@ app.post("/api/v1/history", async (req, res) => {
 
 app.put("/api/v1/history/:id", async (req, res) => {
   const { id } = req.params;
-  const { product_id, product_name, company, transaction_date, quantity } =
+  const { product_id, product_name, company_name, transaction_date, quantity } =
     req.body;
 
   try {
@@ -164,7 +168,7 @@ app.put("/api/v1/history/:id", async (req, res) => {
       update: {
         product_id: product_id,
         product_name: product_name,
-        company: company,
+        company_name: company_name,
         transaction_date: transaction_date,
         quantity: quantity,
       },
@@ -172,7 +176,7 @@ app.put("/api/v1/history/:id", async (req, res) => {
         history_id: { id: parseInt(id, 10) },
         product_id: product_id,
         product_name: product_name,
-        company: company,
+        company_name: company_name,
         transaction_date: transaction_date,
         quantity: quantity,
       },
@@ -185,13 +189,13 @@ app.put("/api/v1/history/:id", async (req, res) => {
 
 app.patch("/api/v1/history/:id", async (req, res) => {
   const { id } = req.params;
-  const { product_id, product_name, company, transaction_date, quantity } =
+  const { product_id, product_name, company_name, transaction_date, quantity } =
     req.body;
 
   const filter = {};
   if (product_id) filter.product_id = product_id;
   if (product_name) filter.product_name = product_name;
-  if (company) filter.company = company;
+  if (company_name) filter.company_name = company_name;
   if (transaction_date) filter.transaction_date = transaction_date;
   if (quantity) filter.quantity = quantity;
 

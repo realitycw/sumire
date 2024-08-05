@@ -11,7 +11,7 @@ const fetchHistoryData = async (filters: Record<string, string>) => {
       .filter(([key, value]) => value !== "")
       .map(([key, value]) => [key, value])
   ).toString();
-  const res = await fetch(`localhost:3000/api/v1/history?${queryParams}`);
+  const res = await fetch(`/api/v1/history?${queryParams}`);
   if (!res.ok) {
     throw new Error("Faild to fetch data");
   }
@@ -25,7 +25,7 @@ const fetchInventoryData = async (filters: Record<string, string>) => {
       .filter(([key, value]) => value !== "")
       .map(([key, value]) => [key, value])
   ).toString();
-  const res = await fetch(`localhost:3000/api/v1/inventory?${queryParams}`);
+  const res = await fetch(`/api/v1/inventory?${queryParams}`);
   if (!res.ok) {
     throw new Error("Faild to fetch data");
   }
@@ -82,18 +82,52 @@ export default function Index() {
     const [formData, setFormData] = useState({
       product_id: "",
       product_name: "",
-      company: "",
+      company_name: "",
+      transaction_date: "",
       quantity: "",
     });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
       setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
-      console.log("Form submitted:", formData);
+      setLoading(true);
+      setError(null);
+      setSuccess(false);
+
+      try {
+        const res = await fetch("/api/v1/history", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to submit form data");
+        }
+
+        setSuccess(true);
+        setFormData({
+          product_id: "",
+          product_name: "",
+          company_name: "",
+          transaction_date: "",
+          quantity: "",
+        });
+      } catch (error) {
+        const e = new Error();
+        setError(e.message);
+      } finally {
+        setLoading(false);
+      }
     };
     return (
       <form onSubmit={handleSubmit}>
@@ -112,8 +146,8 @@ export default function Index() {
           <label>
             製品名:
             <input
-              type="number"
-              name="price"
+              type="text"
+              name="product_name"
               value={formData.product_name}
               onChange={handleChange}
             />
@@ -121,11 +155,22 @@ export default function Index() {
         </div>
         <div>
           <label>
-            会社:
+            会社名:
             <input
-              type="number"
-              name="price"
-              value={formData.company}
+              type="text"
+              name="company_name"
+              value={formData.company_name}
+              onChange={handleChange}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            取引日:
+            <input
+              type="date"
+              name="transaction_date"
+              value={formData.transaction_date}
               onChange={handleChange}
             />
           </label>
@@ -184,10 +229,7 @@ export default function Index() {
           <br />
           <div>
             <p className="text-xl text-gray-900 dark:text-white">Filter</p>
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="username"
-            >
+            <label className="block text-gray-700 text-sm font-bold mb-2">
               取引ID
             </label>
             <input
@@ -197,23 +239,17 @@ export default function Index() {
               placeholder="0"
               onChange={handleFilterChange}
             />
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="username"
-            >
+            <label className="block text-gray-700 text-sm font-bold mb-2">
               製品ID
             </label>
             <input
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               type="text"
               name="product_id"
-              placeholder="製品ID"
+              placeholder="商品ID"
               onChange={handleFilterChange}
             />
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="username"
-            >
+            <label className="block text-gray-700 text-sm font-bold mb-2">
               製品名
             </label>
             <input
@@ -223,10 +259,7 @@ export default function Index() {
               placeholder="製品名"
               onChange={handleFilterChange}
             />
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="username"
-            >
+            <label className="block text-gray-700 text-sm font-bold mb-2">
               会社
             </label>
             <input
@@ -236,10 +269,7 @@ export default function Index() {
               placeholder="会社"
               onChange={handleFilterChange}
             />
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="username"
-            >
+            <label className="block text-gray-700 text-sm font-bold mb-2">
               取引日
             </label>
             <input
@@ -249,10 +279,7 @@ export default function Index() {
               placeholder="YYYY-MM-DD"
               onChange={handleFilterChange}
             />
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="username"
-            >
+            <label className="block text-gray-700 text-sm font-bold mb-2">
               数量
             </label>
             <input

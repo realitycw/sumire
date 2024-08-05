@@ -11,7 +11,7 @@ model History {
     history_id       Int     @id @default(autoincrement())
     product_id       String
     product_name     String
-    company          String?
+    company_name     String?
     transaction_date String
     quantity         Int
 }
