@@ -11,7 +11,6 @@ const InventoryTable = ({ data }: InventoryTableProps) => (
     data={data}
     columns={["製品ID", "製品名", "数量"]}
     pagination={{ limit: 5 }}
-    search={true}
     sort={true}
   />
 );

@@ -103,10 +103,8 @@ app.get("/api/v1/history", async (req, res) => {
     product_id,
     product_name,
     manufacturer_name,
-    supplier_name,
     transaction_date,
     quantity,
-    description,
   } = req.query;
 
   const filter = {};
@@ -114,10 +112,8 @@ app.get("/api/v1/history", async (req, res) => {
   if (product_id) filter.product_id = product_id;
   if (product_name) filter.product_name = product_name;
   if (manufacturer_name) filter.manufacturer_name = manufacturer_name;
-  if (supplier_name) filter.supplier_name = supplier_name;
   if (transaction_date) filter.transaction_date = transaction_date;
   if (quantity) filter.quantity = quantity;
-  if (description) filter.description = description;
 
   try {
     const history = await prisma.history.findMany({
@@ -142,10 +138,8 @@ app.post("/api/v1/history", async (req, res) => {
     product_id,
     product_name,
     manufacturer_name,
-    supplier_name,
     transaction_date,
     quantity,
-    description,
   } = req.body;
 
   try {
@@ -154,10 +148,8 @@ app.post("/api/v1/history", async (req, res) => {
         product_id: product_id,
         product_name: product_name,
         manufacturer_name: manufacturer_name,
-        supplier_name: supplier_name,
         transaction_date: transaction_date,
         quantity: quantity,
-        description: description,
       },
     });
     res.status(201).json(save_history);
@@ -172,10 +164,8 @@ app.put("/api/v1/history/:id", async (req, res) => {
     product_id,
     product_name,
     manufacturer_name,
-    supplier_name,
     transaction_date,
     quantity,
-    description,
   } = req.body;
 
   try {
@@ -185,20 +175,16 @@ app.put("/api/v1/history/:id", async (req, res) => {
         product_id: product_id,
         product_name: product_name,
         manufacturer_name: manufacturer_name,
-        supplier_name: supplier_name,
         transaction_date: transaction_date,
         quantity: quantity,
-        description: description,
       },
       create: {
         history_id: { id: parseInt(id, 10) },
         product_id: product_id,
         product_name: product_name,
         manufacturer_name: manufacturer_name,
-        supplier_name: supplier_name,
         transaction_date: transaction_date,
         quantity: quantity,
-        description: description,
       },
     });
     res.status(200).json(update_history);
@@ -213,20 +199,16 @@ app.patch("/api/v1/history/:id", async (req, res) => {
     product_id,
     product_name,
     manufacturer_name,
-    supplier_name,
     transaction_date,
     quantity,
-    description,
   } = req.body;
 
   const filter = {};
   if (product_id) filter.product_id = product_id;
   if (product_name) filter.product_name = product_name;
   if (manufacturer_name) filter.manufacturer_name = manufacturer_name;
-  if (supplier_name) filter.supplier_name = supplier_name;
   if (transaction_date) filter.transaction_date = transaction_date;
   if (quantity) filter.quantity = quantity;
-  if (description) filter.description = description;
 
   try {
     const update_history = await prisma.history.update({

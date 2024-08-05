@@ -50,10 +50,8 @@ export default function Index() {
     product_id: "",
     product_name: "",
     manufacturer_name: "",
-    supplier_name: "",
     transaction_date: "",
     quantity: "",
-    description: "",
   });
 
   const updateData = useCallback(async () => {
@@ -97,26 +95,33 @@ export default function Index() {
           </button>
           <br />
           <button onClick={() => setCurrentTable("history")}>History</button>
-          {/* Add your filter inputs here */}
+          <br />
           <div>
+            <h2>Filter</h2>
+            <input
+              type="number"
+              name="履歴ID"
+              placeholder="履歴ID"
+              onChange={handleFilterChange}
+            />
             <input
               type="text"
               name="製品ID"
-              placeholder="Item Name"
+              placeholder="製品ID"
               onChange={handleFilterChange}
             />
-            {/* <input
-            type="number"
-            name="minQuantity"
-            placeholder="Min Quantity"
-            onChange={handleFilterChange}
-          />
-          <input
-            type="number"
-            name="maxPrice"
-            placeholder="Max Price"
-            onChange={handleFilterChange}
-          /> */}
+            <input
+              type="text"
+              name="製品名"
+              placeholder="製品名"
+              onChange={handleFilterChange}
+            />
+            <input
+              type="number"
+              name="maxPrice"
+              placeholder="Max Price"
+              onChange={handleFilterChange}
+            />
           </div>
         </div>
         <div style={{ flex: 1, padding: "20px" }}>{tables[currentTable]}</div>
